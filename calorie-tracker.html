@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#6366f1">
+    <title>Calorie Tracker AI</title>
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiQ2Fsb3JpZSBUcmFja2VyIEFJIiwic2hvcnRfbmFtZSI6IkNhbG9yaWVzIiwic3RhcnRfdXJsIjoiLyIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiYmFja2dyb3VuZF9jb2xvciI6IiNmZmZmZmYiLCJ0aGVtZV9jb2xvciI6IiM2MzY2ZjEiLCJpY29ucyI6W3sic3JjIjoiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCNGJXeHVjejBpYUhSMGNEb3ZMM2QzZHk1M015NXZjbWN2TWpBd01DOXpkbWNpSUhacFpYZENiM2c5SWpBZ01DQXhNakFnTVRJd0lqNDhjbVZqZENCM2FXUjBhRDBpTVRJd0lpQm9aV2xuYUhROUlqRXlNQ0lnWm1sc2JEMGlJell6TmpabU1TSXZQanh3WVhSb0lHUTlJazB6TUNBMk1FRXpNQ0F6TUNBd0lERWdNQ0EyTUNBMk1FeXpNQ0F4TURCU016QWdNekFnTUNBd0lERWdOakFnTVRBd1RERXdNQ0EyTUVFek1DQXpNQ0F3SURFZ01TQTJNQzB6TUV3ek1DQXlNRUV6TUNBek1DQXdJREFnTVMBeU1DMDJNRm9pSUdacGJHdzlJaU1tWm1abVptWm1JaTgrUEM5emRtYysiLCJzaXplcyI6IjEyMHgxMjAiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XX0=">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+            text-align: center;
+        }
+
+        .progress-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .circle-progress {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #e5e7eb;
+            stroke-width: 20;
+        }
+
+        .circle-progress-bar {
+            fill: none;
+            stroke: #10b981;
+            stroke-width: 20;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.5s ease, stroke 0.3s ease;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .calories-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .calories-label {
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        .warning {
+            text-align: center;
+            color: #ef4444;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .camera-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .camera-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .meals-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .meals-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .meal-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .meal-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #f3f4f6;
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+        }
+
+        .meal-calories {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .meal-time {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .meal-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            margin-bottom: 10px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .photo-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option-button {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .option-button.secondary {
+            background: #8b5cf6;
+        }
+
+        .preview-section {
+            margin-top: 20px;
+        }
+
+        .preview-image {
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .analyze-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .manual-button {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .settings-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .preset-button {
+            flex: 1;
+            padding: 10px;
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .preset-button:active {
+            background: #e5e7eb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6366f1;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .api-key-section {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .api-key-label {
+            font-weight: 600;
+            color: #92400e;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .calories-number {
+                font-size: 36px;
+            }
+            
+            .circle-progress {
+                width: 160px;
+                height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="settings-button" onclick="openSettings()">⚙️</button>
+    
+    <div class="container">
+        <div class="header">
+            <div class="title">🔥 Calorie Tracker AI</div>
+            <div class="subtitle">Traccia le tue calorie con intelligenza artificiale</div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-title">Calorie Oggi</div>
+            <div class="circle-progress">
+                <svg width="200" height="200">
+                    <circle class="circle-bg" cx="100" cy="100" r="80"></circle>
+                    <circle class="circle-progress-bar" id="progressCircle" cx="100" cy="100" r="80"></circle>
+                </svg>
+                <div class="progress-text">
+                    <div class="calories-number" id="currentCalories">0</div>
+                    <div class="calories-label">di <span id="dailyLimit">2000</span></div>
+                </div>
+            </div>
+            <div id="warningMessage" class="warning" style="display: none;"></div>
+        </div>
+
+        <button class="camera-button" onclick="openCamera()">
+            📸 Scatta Foto del Pasto
+        </button>
+
+        <div class="meals-section">
+            <div class="meals-title">Pasti di Oggi</div>
+            <div id="mealsList">
+                <div class="empty-state">
+                    <div class="empty-icon">🍽️</div>
+                    <div>Nessun pasto registrato oggi</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Camera -->
+    <div id="cameraModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Nuovo Pasto</div>
+                <button class="close-button" onclick="closeCamera()">×</button>
+            </div>
+            
+            <div id="photoOptions" class="photo-options">
+                <button class="option-button" onclick="capturePhoto()">
+                    📷 Scatta Foto
+                </button>
+                <button class="option-button secondary" onclick="selectPhoto()">
+                    🖼️ Scegli dalla Galleria
+                </button>
+                <input type="file" id="fileInput" accept="image/*" capture="environment" onchange="handleFileSelect(event)">
+                <input type="file" id="galleryInput" accept="image/*" onchange="handleFileSelect(event)">
+            </div>
+
+            <div id="previewSection" class="preview-section" style="display: none;">
+                <img id="previewImage" class="preview-image" alt="Preview">
+                <button class="analyze-button" onclick="analyzeImage()">
+                    ✨ Analizza con AI
+                </button>
+                <button class="manual-button" onclick="showManualEntry()">
+                    ✍️ Inserimento Manuale
+                </button>
+                <button class="manual-button" onclick="resetCamera()">
+                    🔄 Scatta Nuova Foto
+                </button>
+            </div>
+
+            <div id="loadingSection" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div>Analisi in corso con AI...</div>
+            </div>
+
+            <div id="errorSection" class="error-message" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- Modal Settings -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Impostazioni</div>
+                <button class="close-button" onclick="closeSettings()">×</button>
+            </div>
+
+            <div class="api-key-section">
+                <label class="api-key-label">🔑 API Key Anthropic</label>
+                <input type="password" id="apiKeyInput" class="form-input" placeholder="sk-ant-api03-...">
+                <button class="option-button" style="margin-top: 10px;" onclick="saveApiKey()">
+                    💾 Salva API Key
+                </button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Soglia Giornaliera (calorie)</label>
+                <input type="number" id="limitInput" class="form-input" placeholder="2000">
+                <div class="preset-buttons">
+                    <button class="preset-button" onclick="setLimit(1500)">1500</button>
+                    <button class="preset-button" onclick="setLimit(2000)">2000</button>
+                    <button class="preset-button" onclick="setLimit(2500)">2500</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="weeklyAvg">0</div>
+                    <div class="stat-label">Media Settimanale</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayTotal">0</div>
+                    <div class="stat-label">Totale Oggi</div>
+                </div>
+            </div>
+
+            <button class="analyze-button" style="margin-top: 20px; background: #ef4444;" onclick="resetTodayData()">
+                🗑️ Reset Dati Giornalieri
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Manual Entry -->
+    <div id="manualModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Inserimento Manuale</div>
+                <button class="close-button" onclick="closeManual()">×</button>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Nome Piatto</label>
+                <input type="text" id="mealNameInput" class="form-input" placeholder="Es: Spaghetti alla carbonara">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Calorie</label>
+                <input type="number" id="mealCaloriesInput" class="form-input" placeholder="Es: 650">
+            </div>
+
+            <button class="analyze-button" onclick="saveManualMeal()">
+                💾 Salva Pasto
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let currentImage = null;
+        let meals = [];
+        let dailyLimit = 2000;
+        let apiKey = '';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            updateUI();
+        });
+
+        function loadData() {
+            const saved = localStorage.getItem('calorieTrackerData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                meals = data.meals || [];
+                dailyLimit = data.dailyLimit || 2000;
+                apiKey = data.apiKey || '';
+            }
+
+            // Clean old meals (older than 30 days)
+            const thirtyDaysAgo = Date.now() - (30 * 24 * 60 * 60 * 1000);
+            meals = meals.filter(meal => meal.timestamp > thirtyDaysAgo);
+            saveData();
+        }
+
+        function saveData() {
+            localStorage.setItem('calorieTrackerData', JSON.stringify({
+                meals,
+                dailyLimit,
+                apiKey
+            }));
+        }
+
+        function getTodayMeals() {
+            const today = new Date().toDateString();
+            return meals.filter(meal => new Date(meal.timestamp).toDateString() === today);
+        }
+
+        function updateUI() {
+            const todayMeals = getTodayMeals();
+            const totalCalories = todayMeals.reduce((sum, meal) => sum + meal.calories, 0);
+            const progress = Math.min(totalCalories / dailyLimit, 1);
+
+            // Update progress circle
+            document.getElementById('currentCalories').textContent = Math.round(totalCalories);
+            document.getElementById('dailyLimit').textContent = dailyLimit;
+
+            const circle = document.getElementById('progressCircle');
+            const circumference = 2 * Math.PI * 80;
+            const offset = circumference - (progress * circumference);
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = offset;
+
+            // Change color based on progress
+            if (totalCalories > dailyLimit) {
+                circle.style.stroke = '#ef4444';
+            } else if (totalCalories > dailyLimit * 0.9) {
+                circle.style.stroke = '#f59e0b';
+            } else {
+                circle.style.stroke = '#10b981';
+            }
+
+            // Update warning
+            const warningMsg = document.getElementById('warningMessage');
+            if (totalCalories > dailyLimit) {
+                warningMsg.textContent = '⚠️ Soglia superata!';
+                warningMsg.style.display = 'block';
+            } else if (totalCalories > dailyLimit * 0.9) {
+                warningMsg.textContent = '⚡ Attenzione, vicino al limite';
+                warningMsg.style.display = 'block';
+            } else {
+                warningMsg.style.display = 'none';
+            }
+
+            // Update meals list
+            const mealsList = document.getElementById('mealsList');
+            if (todayMeals.length === 0) {
+                mealsList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🍽️</div>
+                        <div>Nessun pasto registrato oggi</div>
+                    </div>
+                `;
+            } else {
+                mealsList.innerHTML = todayMeals.map((meal, index) => `
+                    <div class="meal-item">
+                        ${meal.image ? `<img src="${meal.image}" class="meal-image" alt="${meal.name}">` : '<div class="meal-image">🍽️</div>'}
+                        <div class="meal-info">
+                            <div class="meal-name">${meal.name}</div>
+                            <div class="meal-calories">${Math.round(meal.calories)} cal</div>
+                            <div class="meal-time">${new Date(meal.timestamp).toLocaleTimeString('it-IT', {hour: '2-digit', minute: '2-digit'})}</div>
+                        </div>
+                        <button class="meal-delete" onclick="deleteMeal(${index})">🗑️</button>
+                    </div>
+                `).join('');
+            }
+
+            // Update settings
+            document.getElementById('limitInput').value = dailyLimit;
+            document.getElementById('todayTotal').textContent = Math.round(totalCalories);
+            document.getElementById('weeklyAvg').textContent = Math.round(getWeeklyAverage());
+        }
+
+        function getWeeklyAverage() {
+            const weekAgo = Date.now() - (7 * 24 * 60 * 60 * 1000);
+            const weekMeals = meals.filter(meal => meal.timestamp > weekAgo);
+            if (weekMeals.length === 0) return 0;
+            const total = weekMeals.reduce((sum, meal) => sum + meal.calories, 0);
+            return total / 7;
+        }
+
+        // Camera functions
+        function openCamera() {
+            document.getElementById('cameraModal').classList.add('active');
+            resetCamera();
+        }
+
+        function closeCamera() {
+            document.getElementById('cameraModal').classList.remove('active');
+            resetCamera();
+        }
+
+        function resetCamera() {
+            currentImage = null;
+            document.getElementById('photoOptions').style.display = 'flex';
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('errorSection').style.display = 'none';
+        }
+
+        function capturePhoto() {
+            document.getElementById('fileInput').click();
+        }
+
+        function selectPhoto() {
+            document.getElementById('galleryInput').click();
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImage = e.target.result;
+                document.getElementById('previewImage').src = currentImage;
+                document.getElementById('photoOptions').style.display = 'none';
+                document.getElementById('previewSection').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function analyzeImage() {
+            if (!apiKey) {
+                showError('⚠️ Inserisci prima la tua API Key nelle impostazioni!');
+                return;
+            }
+
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('errorSection').style.display = 'none';
+
+            try {
+                const base64Image = currentImage.split(',')[1];
+
+                const response = await fetch('https://api.anthropic.com/v1/messages', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': apiKey,
+                        'anthropic-version': '2023-06-01'
+                    },
+                    body: JSON.stringify({
+                        model: 'claude-sonnet-4-20250514',
+                        max_tokens: 1000,
+                        messages: [{
+                            role: 'user',
+                            content: [
+                                {
+                                    type: 'image',
+                                    source: {
+                                        type: 'base64',
+                                        media_type: 'image/jpeg',
+                                        data: base64Image
+                                    }
+                                },
+                                {
+                                    type: 'text',
+                                    text: `Analizza questa immagine di cibo e fornisci una stima delle calorie.
+
+Rispondi SOLO nel seguente formato JSON (senza markdown, solo il JSON):
+{
+    "nome_piatto": "nome del piatto in italiano",
+    "calorie": numero_stimato_calorie,
+    "descrizione": "breve descrizione degli ingredienti visibili"
+}
+
+Esempio:
+{
+    "nome_piatto": "Spaghetti alla carbonara",
+    "calorie": 650,
+    "descrizione": "Pasta con uova, guanciale e pecorino"
+}`
+                                }
+                            ]
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Errore API: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const textContent = data.content.find(c => c.type === 'text')?.text;
+                
+                if (!textContent) {
+                    throw new Error('Risposta non valida dall\'API');
+                }
+
+                // Clean and parse JSON
+                const cleanedJSON = textContent
+                    .replace(/```json/g, '')
+                    .replace(/```/g, '')
+                    .trim();
+
+                const result = JSON.parse(cleanedJSON);
+
+                // Add meal
+                addMeal(result.nome_piatto, result.calorie, currentImage);
+                closeCamera();
+                updateUI();
+
+            } catch (error) {
+                console.error('Error:', error);
+                showError(`❌ Errore: ${error.message}`);
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('previewSection').style.display = 'block';
+            }
+        }
+
+        function showError(message) {
+            const errorSection = document.getElementById('errorSection');
+            errorSection.textContent = message;
+            errorSection.style.display = 'block';
+            setTimeout(() => {
+                errorSection.style.display = 'none';
+            }, 5000);
+        }
+
+        function addMeal(name, calories, image) {
+            meals.unshift({
+                name,
+                calories: Number(calories),
+                timestamp: Date.now(),
+                image
+            });
+            saveData();
+        }
+
+        function deleteMeal(index) {
+            const todayMeals = getTodayMeals();
+            const mealToDelete = todayMeals[index];
+            const globalIndex = meals.findIndex(m => m.timestamp === mealToDelete.timestamp);
+            if (globalIndex !== -1) {
+                meals.splice(globalIndex, 1);
+                saveData();
+                updateUI();
+            }
+        }
+
+        // Manual entry
+        function showManualEntry() {
+            document.getElementById('manualModal').classList.add('active');
+        }
+
+        function closeManual() {
+            document.getElementById('manualModal').classList.remove('active');
+        }
+
+        function saveManualMeal() {
+            const name = document.getElementById('mealNameInput').value;
+            const calories = document.getElementById('mealCaloriesInput').value;
+
+            if (!name || !calories) {
+                alert('Inserisci nome e calorie');
+                return;
+            }
+
+            addMeal(name, Number(calories), currentImage);
+            closeManual();
+            closeCamera();
+            updateUI();
+
+            document.getElementById('mealNameInput').value = '';
+            document.getElementById('mealCaloriesInput').value = '';
+        }
+
+        // Settings
+        function openSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+            document.getElementById('apiKeyInput').value = apiKey;
+            updateUI();
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function saveApiKey() {
+            apiKey = document.getElementById('apiKeyInput').value;
+            saveData();
+            alert('✅ API Key salvata!');
+        }
+
+        function setLimit(limit) {
+            dailyLimit = limit;
+            document.getElementById('limitInput').value = limit;
+            saveData();
+            updateUI();
+        }
+
+        function resetTodayData() {
+            if (confirm('Vuoi eliminare tutti i pasti di oggi?')) {
+                const today = new Date().toDateString();
+                meals = meals.filter(meal => new Date(meal.timestamp).toDateString() !== today);
+                saveData();
+                updateUI();
+            }
+        }
+
+        // Install prompt for PWA
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+    </script>
+</body>
+</html>
